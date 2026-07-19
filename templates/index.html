@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RealCashEarn - Earn Points</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <script src="//libtl.com/sdk.js" data-zone="9584558" data-sdk="show_9584558"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1> RealCashEarn</h1>
+            <div class="points-balance">
+                <span class="label">Your Points:</span>
+                <span class="points" id="userPoints">0</span>
+            </div>
+        </div>
+
+        <!-- Main Menu -->
+        <div class="menu">
+            <div class="menu-item" onclick="showRewardedAd()">
+                <div class="icon">🎁</div>
+                <div class="text">
+                    <h3>Watch Ad & Earn</h3>
+                    <p>Get 10 points per ad</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="showInAppAd()">
+                <div class="icon">📺</div>
+                <div class="text">
+                    <h3>Auto Ads</h3>
+                    <p>Earn while browsing</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="window.location.href='/withdraw'">
+                <div class="icon">💵</div>
+                <div class="text">
+                    <h3>Withdraw</h3>
+                    <p>Cash out via Bikash/Nagad</p>
+                </div>
+            </div>
+
+            <div class="menu-item" onclick="showLeaderboard()">
+                <div class="icon">🏆</div>
+                <div class="text">
+                    <h3>Leaderboard</h3>
+                    <p>Top earners</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Tasks Section -->
+        <div class="tasks-section">
+            <h2>Daily Tasks</h2>
+            <div class="task-item" onclick="completeTask('daily_checkin')">
+                <div class="task-info">
+                    <h4>📅 Daily Check-in</h4>
+                    <p>+5 points</p>
+                </div>
+                <button class="task-btn" id="checkinBtn">Claim</button>
+            </div>
+
+            <div class="task-item" onclick="completeTask('invite_friend')">
+                <div class="task-info">
+                    <h4>👥 Invite Friend</h4>
+                    <p>+50 points per friend</p>
+                </div>
+                <button class="task-btn" id="inviteBtn">Invite</button>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            <p>Powered by Monetag</p>
+            <p>1 point = ৳0.10 BDT</p>
+        </div>
+    </div>
+
+    <script src="/static/script.js"></script>
+</body>
+</html>
