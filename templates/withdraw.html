@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Withdraw - RealCashEarn</title>
+    <script src="https://telegram.org/js/telegram-web-app.js"></script>
+    <link rel="stylesheet" href="/static/style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💵 Withdraw</h1>
+            <div class="points-balance">
+                <span class="label">Available Points:</span>
+                <span class="points" id="userPoints">0</span>
+            </div>
+        </div>
+
+        <form id="withdrawForm" class="withdraw-form">
+            <div class="form-group">
+                <label>Withdrawal Method</label>
+                <select id="method" required>
+                    <option value="">Select Method</option>
+                    <option value="bikash">bKash</option>
+                    <option value="nagad">Nagad</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label>Mobile Number</label>
+                <input type="tel" id="number" placeholder="01XXXXXXXXX" required pattern="01[3-9]\d{8}">
+                <small>Enter your 11-digit mobile number</small>
+            </div>
+
+            <div class="form-group">
+                <label>Amount (Points)</label>
+                <input type="number" id="amount" placeholder="Minimum 100 points" min="100" step="10" required>
+                <small>1 point = ৳0.10 BDT | Minimum withdrawal: 100 points (৳10)</small>
+            </div>
+
+            <div class="conversion-info">
+                <p>You will receive: <strong id="bdtAmount">0.00</strong></p>
+            </div>
+
+            <button type="submit" class="submit-btn">Submit Withdrawal Request</button>
+        </form>
+
+        <div class="back-btn" onclick="window.location.href='/'">
+            ← Back to Home
+        </div>
+    </div>
+
+    <script>
+        const tg = window.Telegram.WebApp;
+        tg.expand();
+
+        const user = tg.initDataUnsafe.user;
+        const userId = user?.id?.toString() || 'guest';
+        const API_URL = window.location.origin;
+
+        // Load user points
+        async function loadUserPoints() {
+            try {
+                const response = await fetch(`${API_URL}/api/user`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ user_id: userId, username: user?.username || 'Anonymous' })
+                });
+                const data = await response.json();
+                document.getElementById('userPoints').textContent = data.points.toFixed(2);
+            } catch (error) {
+                console.error('Error:', error);
+            }
+        }
+
+        // Calculate BDT amount
+        document.getElementById('amount').addEventListener('input', function() {
+            const points = parseFloat(this.value) || 0;
+            const bdt = (points * 0.10).toFixed(2);
+            document.getElementById('bdtAmount').textContent = `৳${bdt}`;
+        });
+
+        // Handle form submission
+        document.getElementById('withdrawForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const method = document.getElementById('method').value;
+            const number = document.getElementById('number').value;
+            const amount = parseFloat(document.getElementById('amount').value);
+
+            try {
+                const response = await fetch(`${API_URL}/api/withdraw`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        user_id: userId,
+                        method: method,
+                        number: number,
+                        amount: amount
+                    })
+                });
+
+                const data = await response.json();
+                
+                if (data.status === 'success') {
+                    tg.showAlert(`✅ Withdrawal request submitted successfully!\n\nAmount: ৳${(amount * 0.10).toFixed(2)}\nMethod: ${method}\nNumber: ${number}\n\nProcessing time: 24-48 hours`);
+                    window.location.href = '/';
+                } else {
+                    tg.showAlert(`❌ Error: ${data.message}`);
+                }
+            } catch (error) {
+                tg.showAlert('❌ An error occurred. Please try again.');
+            }
+        });
+
+        window.addEventListener('load', loadUserPoints);
+    </script>
+</body>
+</html>
